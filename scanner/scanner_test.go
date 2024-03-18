@@ -8,8 +8,8 @@ import (
 
 	"path/filepath"
 
-	"github.com/dave/courtney/scanner"
-	"github.com/dave/courtney/shared"
+	"github.com/bkmeneguello/courtney/scanner"
+	"github.com/bkmeneguello/courtney/shared"
 	"github.com/dave/patsy"
 	"github.com/dave/patsy/builder"
 	"github.com/dave/patsy/vos"

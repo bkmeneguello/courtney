@@ -69,7 +69,7 @@ that the other result parameters are zero values.
 
 # Install
 ```
-go get -u github.com/dave/courtney 
+go get -u github.com/bkmeneguello/courtney 
 ```
 
 # Usage
