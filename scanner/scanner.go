@@ -8,9 +8,9 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/bkmeneguello/courtney/shared"
 	"github.com/dave/astrid"
 	"github.com/dave/brenda"
-	"github.com/dave/courtney/shared"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/packages"
 )

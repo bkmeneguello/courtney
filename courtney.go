@@ -8,9 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/dave/courtney/scanner"
-	"github.com/dave/courtney/shared"
-	"github.com/dave/courtney/tester"
+	"github.com/bkmeneguello/courtney/scanner"
+	"github.com/bkmeneguello/courtney/shared"
+	"github.com/bkmeneguello/courtney/tester"
 	"github.com/dave/patsy"
 	"github.com/dave/patsy/vos"
 )
