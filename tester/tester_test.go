@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bkmeneguello/courtney/shared"
-	"github.com/bkmeneguello/courtney/tester"
+	"github.com/dave/courtney/shared"
+	"github.com/dave/courtney/tester"
 	"github.com/dave/patsy"
 	"github.com/dave/patsy/builder"
 	"github.com/dave/patsy/vos"
@@ -53,6 +53,7 @@ func TestTester_ProcessExcludes(t *testing.T) {
 					},
 				},
 			}
+			excludeFiles := map[string]bool{}
 			excludes := map[string]map[int]bool{
 				filepath.Join(pdir, "a.go"): {
 					25: true,
@@ -64,7 +65,7 @@ func TestTester_ProcessExcludes(t *testing.T) {
 				{Count: 0, StartLine: 11, EndLine: 20},
 				{Count: 1, StartLine: 21, EndLine: 30},
 			}
-			if err := ts.ProcessExcludes(excludes); err != nil {
+			if err := ts.ProcessExcludes(excludeFiles, excludes); err != nil {
 				t.Fatalf("Processing excludes: %s", err)
 			}
 			if !reflect.DeepEqual(ts.Results[0].Blocks, expected) {

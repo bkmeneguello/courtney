@@ -10,9 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/bkmeneguello/courtney/shared"
-	"github.com/bkmeneguello/courtney/tester/logger"
-	"github.com/bkmeneguello/courtney/tester/merge"
+	"github.com/dave/courtney/shared"
+	"github.com/dave/courtney/tester/logger"
+	"github.com/dave/courtney/tester/merge"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/cover"
 )
@@ -139,7 +139,7 @@ func (t *Tester) Enforce() error {
 
 // ProcessExcludes uses the output from the scanner package and removes blocks
 // from the merged coverage file.
-func (t *Tester) ProcessExcludes(excludes map[string]map[int]bool) error {
+func (t *Tester) ProcessExcludes(excludeFiles map[string]bool, excludes map[string]map[int]bool) error {
 	var processed []*cover.Profile
 
 	for _, p := range t.Results {
@@ -149,6 +149,10 @@ func (t *Tester) ProcessExcludes(excludes map[string]map[int]bool) error {
 		fpath, err := t.setup.Paths.FilePath(p.FileName)
 		if err != nil {
 			return err
+		}
+
+		if ex, ok := excludeFiles[fpath]; ok && ex {
+			continue
 		}
 
 		f, ok := excludes[fpath]

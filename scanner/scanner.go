@@ -1,27 +1,26 @@
 package scanner
 
 import (
-	"bytes"
 	"fmt"
 	"go/ast"
 	"go/constant"
 	"go/token"
 	"go/types"
-	"os"
 	"strings"
 
-	"github.com/bkmeneguello/courtney/shared"
 	"github.com/dave/astrid"
 	"github.com/dave/brenda"
+	"github.com/dave/courtney/shared"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/packages"
 )
 
 // CodeMap scans a number of packages for code to exclude
 type CodeMap struct {
-	setup    *shared.Setup
-	pkgs     []*packages.Package
-	Excludes map[string]map[int]bool
+	setup        *shared.Setup
+	pkgs         []*packages.Package
+	Excludes     map[string]map[int]bool
+	ExcludeFiles map[string]bool
 }
 
 // PackageMap scans a single package for code to exclude
@@ -46,8 +45,9 @@ type packageId struct {
 // New returns a CoseMap with the provided setup
 func New(setup *shared.Setup) *CodeMap {
 	return &CodeMap{
-		setup:    setup,
-		Excludes: make(map[string]map[int]bool),
+		setup:        setup,
+		Excludes:     make(map[string]map[int]bool),
+		ExcludeFiles: make(map[string]bool),
 	}
 }
 
@@ -56,6 +56,10 @@ func (c *CodeMap) addExclude(fpath string, line int) {
 		c.Excludes[fpath] = make(map[int]bool)
 	}
 	c.Excludes[fpath][line] = true
+}
+
+func (c *CodeMap) addExcludeFile(fpath string) {
+	c.ExcludeFiles[fpath] = true
 }
 
 // LoadProgram uses the loader package to load and process the source for a
@@ -128,24 +132,13 @@ func (p *PackageMap) ScanPackage() error {
 			file:       f,
 			matcher:    astrid.NewMatcher(p.pkg.TypesInfo.Uses, p.pkg.TypesInfo.Defs),
 		}
+		if p.setup.ExcludeGeneratedCode && ast.IsGenerated(f) {
+			pos := fm.fset.Position(f.Package)
+			p.addExcludeFile(pos.Filename)
+			continue
+		}
 		if err := fm.FindExcludes(); err != nil {
 			return errors.WithStack(err)
-		}
-	}
-
-	if p.setup.ExcludeGeneratedCode {
-		// Exclude complete files, if the code is generated.
-		for _, f := range p.pkg.GoFiles {
-			body, err := os.ReadFile(f)
-			if err != nil {
-				return errors.WithStack(err)
-			}
-			if !isGenerated(body) {
-				continue
-			}
-			for i := range bytes.Split(body, []byte("\n")) {
-				p.addExclude(f, i+1)
-			}
 		}
 	}
 	return nil

@@ -8,9 +8,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/bkmeneguello/courtney/scanner"
-	"github.com/bkmeneguello/courtney/shared"
-	"github.com/bkmeneguello/courtney/tester"
+	"github.com/dave/courtney/scanner"
+	"github.com/dave/courtney/shared"
+	"github.com/dave/courtney/tester"
 	"github.com/dave/patsy"
 	"github.com/dave/patsy/vos"
 )
@@ -73,7 +73,7 @@ func Run(setup *shared.Setup) error {
 			return errors.Wrapf(err, "Load")
 		}
 	}
-	if err := t.ProcessExcludes(s.Excludes); err != nil {
+	if err := t.ProcessExcludes(s.ExcludeFiles, s.Excludes); err != nil {
 		return errors.Wrapf(err, "ProcessExcludes")
 	}
 	if err := t.Save(); err != nil {
